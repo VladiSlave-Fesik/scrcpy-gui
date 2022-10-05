@@ -1,9 +1,9 @@
 import os
 import subprocess as sp
-from app import main as app
+
 import re
 
-ip = app
+ip = ''
 
 connect = f'adb connect {ip}'
 
