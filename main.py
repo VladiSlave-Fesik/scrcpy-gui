@@ -1,8 +1,10 @@
 import os
 import subprocess as sp
+from app import main as app
+import re
 
+ip = app
 
-ip = '192.168.0.182'
 connect = f'adb connect {ip}'
 
 sp.run(connect,stdout=sp.DEVNULL)
