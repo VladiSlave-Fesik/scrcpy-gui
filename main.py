@@ -1,5 +1,4 @@
 import time
-
 from PyQt5 import QtGui
 from PyQt5.QtGui import QIntValidator, QFont, QColor
 from PyQt5.QtCore import Qt, QCoreApplication
@@ -7,7 +6,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QVBoxLay
 import os
 from os import startfile as run
 import sys
-
+import subprocess as sp
 
 
 class main_window(QMainWindow):
@@ -51,6 +50,7 @@ class main_window(QMainWindow):
     def scrcpy(self):
         os.startfile(r'E:\Games\scrcpy\scrcpy.exe')
         self.hide()
+        self.quit()
 
 
 style = '''
@@ -116,20 +116,40 @@ class GUI(QWidget):
         self.setLayout(self.main_line)
         self.show()
 
-        self.file = open('recents.txt', 'w')
-        for i in self.recents:
-            self.file.write(f'{i}\n')
-
-        self.file.close()
-
     def change_recents(self,ip):
-        if ip not in self.recents:
-            self.recents[3] = self.recents[2]
-            self.recents[2] = self.recents[1]
-            self.recents[1] = self.recents[0]
-            self.recents[0] = ip
 
+        connect = f'adb connect {ip}'
+        sp.run(connect, stdout=sp.DEVNULL)
+        os.startfile(r'E:\Games\scrcpy\scrcpy.exe')
 
+        print(ip)
+        print(self.recents)
+
+        print(0)
+
+        if ip not in self.recents and len(self.recents) != 1:
+            self.recents = self.recents[1:]
+            self.recents.insert(0,ip)
+
+        elif ip not in self.recents and len(self.recents) == 1:
+            pass
+
+        print(self.recents)
+
+        print(1)
+
+        self.file = open('recents.txt', 'w')
+
+        print(2)
+
+        for i in self.recents:
+            print(i)
+            self.file.write(f'{i}\n')
+            self.file.close()
+        print(3)
+
+        self.quit()
+        print(4)
 
 font = QFont('Consolas',25)
 

@@ -1,14 +1,7 @@
-import os
-import subprocess as sp
+lst = [1]
 
-import re
+lst = lst[1:]
+print(lst)
 
-ip = ''
-
-connect = f'adb connect {ip}'
-
-sp.run(connect,stdout=sp.DEVNULL)
-
-scrcpy = r'E:\Games\scrcpy\scrcpy.exe'
-
-os.startfile(scrcpy)
+lst.insert(0,'ok')
+print(lst)
