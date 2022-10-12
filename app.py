@@ -1,66 +1,35 @@
-from PyQt5 import QtGui
-from PyQt5.QtGui import QIntValidator
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QVBoxLayout, QRadioButton, QHBoxLayout,QMessageBox,QLineEdit
+from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QLabel, QVBoxLayout, QWidget
 
-def main():
-
-    with open('recents.txt') as file:
-        recents_list = file.readlines()
+import sys
 
 
-    recents = [i.strip() for i in recents_list]
-
-    def change_recents(ip):
-        if ip not in recents:
-            recents[3] = recents[2]
-            recents[2] = recents[1]
-            recents[1] = recents[0]
-            recents[0] = ip
-
-    app = QApplication([])
-    main_win = QWidget()
-    main_win.setWindowTitle('Ip Enter')
-    main_win.resize(300,200)
-    main_win.setWindowIcon(QtGui.QIcon('icon.ico'))
-    main_win.setStyleSheet("background-image : url(back.png)")
-
-    label = QLabel('Enter ip of device:')
-    entering = QLineEdit()
-    entering.setMaxLength(20)
-    btn = QPushButton('Confirm')
-    label2 = QLabel('Recent`s:')
-
-    top_line = QHBoxLayout()
-    mid_line = QHBoxLayout()
-    bot_line = QHBoxLayout()
-
-    top_line.addWidget(label)
-    top_line.addWidget(entering)
-    top_line.addWidget(btn)
-
-    mid_line.addWidget(label2)
-
-    for i in recents_list[:4]:
-        recent = QLabel(i)
-        bot_line.addWidget(recent)
-
-    main_line = QVBoxLayout()
-    main_line.addLayout(top_line)
-    main_line.addLayout(mid_line)
-    main_line.addLayout(bot_line)
-
-    btn.clicked.connect(lambda : change_recents(entering.text()))
-
-    main_win.setLayout(main_line)
-    main_win.show()
-    app.exec()
+class AnotherWindow(QWidget):
+    """
+    This "window" is a QWidget. If it has no parent, it
+    will appear as a free-floating window as we want.
+    """
+    def __init__(self):
+        super().__init__()
+        layout = QVBoxLayout()
+        self.label = QLabel("Another Window")
+        layout.addWidget(self.label)
+        self.setLayout(layout)
 
 
+class MainWindow(QMainWindow):
 
-    file = open('recents.txt','w')
-    for i in recents:
-        file.write(f'{i}\n')
+    def __init__(self):
+        super().__init__()
+        self.button = QPushButton("Push for Window")
+        self.button.clicked.connect(self.show_new_window)
+        self.setCentralWidget(self.button)
 
-    file.close()
+    def show_new_window(self, checked):
+        self.w = AnotherWindow()
+        self.w.show()
 
+
+app = QApplication(sys.argv)
+w = MainWindow()
+w.show()
+app.exec()
