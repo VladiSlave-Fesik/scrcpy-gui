@@ -3,51 +3,57 @@ import time
 from PyQt5 import QtGui
 from PyQt5.QtGui import QIntValidator, QFont, QColor
 from PyQt5.QtCore import Qt, QCoreApplication
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QVBoxLayout, QRadioButton, QHBoxLayout,QMessageBox,QLineEdit
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QVBoxLayout, QRadioButton, QHBoxLayout,QMessageBox,QLineEdit,QMainWindow
 import os
 from os import startfile as run
 import sys
 
-app = QApplication([])
-
-def main():
-    global app, main_win
 
 
-    main_win = QWidget()
-    main_win.setWindowTitle('Options')
-    main_win.resize(300,200)
-    main_win.setWindowIcon(QtGui.QIcon('icon.ico'))
-    main_win.setStyleSheet("background-image : url(back1.png)")
+class main_window(QMainWindow):
 
-    btn1 = QPushButton('scrcpy')
-    btn1.setStyleSheet("color: rgb(14, 227, 149); border-radius: 10px; border-style: outset; border-color: yellow; border-width: 2px;")
-    btn1.setFont(font)
+    def __init__(self):
+        super().__init__()
 
-    btn2 = QPushButton('connect gui')
-    btn2.setFont(font)
-    btn2.setStyleSheet("color: rgb(14, 227, 149); border-radius: 10px; border-style: outset; border-color: yellow; border-width: 2px;")
+        self.setWindowTitle('Options')
+        self.resize(300,200)
+        self.setWindowIcon(QtGui.QIcon('icon.ico'))
+        self.setStyleSheet("background-image : url(back1.png)")
 
-    top_line = QHBoxLayout()
-    bot_line = QHBoxLayout()
+        self.btn1 = QPushButton('scrcpy')
+        self.btn1.setStyleSheet("color: rgb(14, 227, 149); border-radius: 10px; border-style: outset; border-color: yellow; border-width: 2px;")
+        self.btn1.setFont(font)
 
-    top_line.addWidget(btn1)
+        self.btn2 = QPushButton('connect gui')
+        self.btn2.setFont(font)
+        self.btn2.setStyleSheet("color: rgb(14, 227, 149); border-radius: 10px; border-style: outset; border-color: yellow; border-width: 2px;")
 
-    bot_line.addWidget(btn2)
 
-    main_line = QVBoxLayout()
-    main_line.addLayout(top_line)
-    main_line.addLayout(bot_line)
+        self.btn1.clicked.connect(lambda: self.scrcpy())
+        self.btn2.clicked.connect(lambda: GUI(self))
 
-    btn1.clicked.connect(lambda: run_scrcpy())
-    btn2.clicked.connect(lambda: run_connect_app())
+        self.top_line = QHBoxLayout()
+        self.bot_line = QHBoxLayout()
 
-    main_win.setLayout(main_line)
-    main_win.show()
-    app.exec()
+        self.top_line.addWidget(self.btn1)
 
-def connect_app():
-    style = '''
+        self.bot_line.addWidget(self.btn2)
+
+        self.main_line = QVBoxLayout()
+        self.main_line.addLayout(self.top_line)
+        self.main_line.addLayout(self.bot_line)
+
+        self.widget = QWidget()
+        self.widget.setLayout(self.main_line)
+
+        self.setCentralWidget(self.widget)
+
+    def scrcpy(self):
+        os.startfile(r'E:\Games\scrcpy\scrcpy.exe')
+        self.hide()
+
+
+style = '''
     border-style: outset;
     border-width: 2px;
     border-radius: 5px;
@@ -57,82 +63,80 @@ def connect_app():
     padding: 6px;
     '''
 
-    with open('recents.txt') as file:
-        recents_list = file.readlines()
+class GUI(QWidget):
+    def __init__(self,main_app):
 
-    recents = [i.strip() for i in recents_list]
+        main_app.hide()
 
-    def change_recents(ip):
-        if ip not in recents:
-            recents[3] = recents[2]
-            recents[2] = recents[1]
-            recents[1] = recents[0]
-            recents[0] = ip
+        super().__init__()
 
+        with open('recents.txt') as file:
+            self.recents_list = file.readlines()
 
-    
-    main_win = QWidget()
-    main_win.setWindowTitle('Ip Enter')
-    main_win.resize(300, 200)
-    main_win.setWindowIcon(QtGui.QIcon('icon.ico'))
-    main_win.setStyleSheet("background-color: grey;")
+        self.recents = [i.strip() for i in self.recents_list]
 
-    label = QLabel('Enter ip of device:')
-    label.setStyleSheet(style)
+        self.setWindowTitle('Ip Enter')
+        self.resize(300, 200)
+        self.setWindowIcon(QtGui.QIcon('icon.ico'))
+        self.setStyleSheet("background-color: grey;")
 
-    entering = QLineEdit()
-    entering.setMaxLength(20)
-    entering.setStyleSheet(style)
+        self.label = QLabel('Enter ip of device:')
+        self.label.setStyleSheet(style)
 
-    btn = QPushButton('Confirm')
-    btn.setStyleSheet(style)
+        self.entering = QLineEdit()
+        self.entering.setMaxLength(20)
+        self.entering.setStyleSheet(style)
 
-    label2 = QLabel('Recent`s:')
+        self.btn = QPushButton('Confirm')
+        self.btn.setStyleSheet(style)
 
-    top_line = QHBoxLayout()
-    mid_line = QHBoxLayout()
-    bot_line = QHBoxLayout()
+        self.label2 = QLabel('Recent`s:')
 
-    top_line.addWidget(label)
-    top_line.addWidget(entering)
-    top_line.addWidget(btn)
+        self.top_line = QHBoxLayout()
+        self.mid_line = QHBoxLayout()
+        self.bot_line = QHBoxLayout()
 
-    mid_line.addWidget(label2)
+        self.top_line.addWidget(self.label)
+        self.top_line.addWidget(self.entering)
+        self.top_line.addWidget(self.btn)
+        self.mid_line.addWidget(self.label2)
 
-    for i in recents_list[:4]:
-        recent = QLabel(i)
-        recent.setStyleSheet(style)
-        bot_line.addWidget(recent)
+        for i in self.recents_list[:4]:
+            self.recent = QLabel(i)
+            self.recent.setStyleSheet(style)
+            self.bot_line.addWidget(self.recent)
 
-    main_line = QVBoxLayout()
-    main_line.addLayout(top_line)
-    main_line.addLayout(mid_line)
-    main_line.addLayout(bot_line)
+        self.main_line = QVBoxLayout()
+        self.main_line.addLayout(self.top_line)
+        self.main_line.addLayout(self.mid_line)
+        self.main_line.addLayout(self.bot_line)
 
-    btn.clicked.connect(lambda: change_recents(entering.text()))
+        self.btn.clicked.connect(lambda: self.change_recents(self.entering.text()))
 
-    main_win.setLayout(main_line)
-    main_win.show()
-    app.exec()
+        self.setLayout(self.main_line)
+        self.show()
 
-    file = open('recents.txt', 'w')
-    for i in recents:
-        file.write(f'{i}\n')
+        self.file = open('recents.txt', 'w')
+        for i in self.recents:
+            self.file.write(f'{i}\n')
 
-    file.close()
+        self.file.close()
 
-def run_connect_app():
-    time.sleep(0.2)
-    app.quit()
-    time.sleep(0.2)
-    connect_app()
+    def change_recents(self,ip):
+        if ip not in self.recents:
+            self.recents[3] = self.recents[2]
+            self.recents[2] = self.recents[1]
+            self.recents[1] = self.recents[0]
+            self.recents[0] = ip
 
 
-def run_scrcpy():
-    run(r'E:\Games\scrcpy\scrcpy.exe')
-    app.quit()
 
 font = QFont('Consolas',25)
 
 if __name__ == '__main__':
-    main()
+    app = QApplication(sys.argv)
+
+    w = main_window()
+    w.show()
+
+    app.exec()
